@@ -18,6 +18,58 @@
 
 // clang-format off
 
+
+#if defined(TAP_DANCE_ENABLE)
+// Tap Dance declarations
+enum {
+    TD_1_F1,
+    TD_2_F2,
+    TD_3_F3,
+    TD_4_F4,
+    TD_5_F5,
+    TD_6_F6,
+    TD_7_F7,
+    TD_8_F8,
+    TD_9_F9,
+    TD_0_F10,
+    TD_MIN_F11,
+    TD_EQL_F12,
+};
+
+// Tap Dance definitions
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_1_F1] = ACTION_TAP_DANCE_DOUBLE(KC_1, KC_F1),
+    [TD_2_F2] = ACTION_TAP_DANCE_DOUBLE(KC_2, KC_F2),
+    [TD_3_F3] = ACTION_TAP_DANCE_DOUBLE(KC_3, KC_F3),
+    [TD_4_F4] = ACTION_TAP_DANCE_DOUBLE(KC_4, KC_F4),
+    [TD_5_F5] = ACTION_TAP_DANCE_DOUBLE(KC_5, KC_F5),
+    [TD_6_F6] = ACTION_TAP_DANCE_DOUBLE(KC_6, KC_F6),
+    [TD_7_F7] = ACTION_TAP_DANCE_DOUBLE(KC_7, KC_F7),
+    [TD_8_F8] = ACTION_TAP_DANCE_DOUBLE(KC_8, KC_F8),
+    [TD_9_F9] = ACTION_TAP_DANCE_DOUBLE(KC_9, KC_F9),
+    [TD_0_F10] = ACTION_TAP_DANCE_DOUBLE(KC_0, KC_F10),
+    [TD_MIN_F11] = ACTION_TAP_DANCE_DOUBLE(KC_MINS, KC_F11),
+    [TD_EQL_F12] = ACTION_TAP_DANCE_DOUBLE(KC_EQL, KC_F12),
+};
+
+#define KM_1 TD_1_F1
+#define KM_2 TD_1_F1
+#define KM_3 TD_1_F1
+#define KM_4 TD_1_F1
+#define KM_5 TD_1_F1
+#define KM_6 TD_1_F1
+#define KM_7 TD_1_F1
+#define KM_8 TD_1_F1
+#define KM_9 TD_1_F1
+#define KM_0 TD_1_F1
+#define KM_MIN TD_1_F1
+#define KM_EQL TD_1_F1
+
+#else
+
+#endif // TAP_DANCE_ENABLE
+
+
 enum layers{
     MAC_BASE,
     WIN_BASE,
