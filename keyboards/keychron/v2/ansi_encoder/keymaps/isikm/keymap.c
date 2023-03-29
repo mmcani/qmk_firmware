@@ -16,11 +16,19 @@
 
 #include QMK_KEYBOARD_H
 
+#include "os_detection.h"
+
 // clang-format off
 
+enum layers{
+    MAC_BASE,
+    WIN_BASE,
+    _FN1,
+    _FN2,
+    _FN3
+};
 
-#if defined(TAP_DANCE_ENABLE)
-// Tap Dance declarations
+#if defined(TAP_DANCE_ENABLE)// Tap Dance declarations
 enum {
     TD_1_F1,
     TD_2_F2,
@@ -38,6 +46,7 @@ enum {
 
 // Tap Dance definitions
 tap_dance_action_t tap_dance_actions[] = {
+    // Tap once for Escape, twice for Caps Lock
     [TD_1_F1] = ACTION_TAP_DANCE_DOUBLE(KC_1, KC_F1),
     [TD_2_F2] = ACTION_TAP_DANCE_DOUBLE(KC_2, KC_F2),
     [TD_3_F3] = ACTION_TAP_DANCE_DOUBLE(KC_3, KC_F3),
@@ -50,47 +59,53 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_0_F10] = ACTION_TAP_DANCE_DOUBLE(KC_0, KC_F10),
     [TD_MIN_F11] = ACTION_TAP_DANCE_DOUBLE(KC_MINS, KC_F11),
     [TD_EQL_F12] = ACTION_TAP_DANCE_DOUBLE(KC_EQL, KC_F12),
+
 };
 
-#define KM_1 TD_1_F1
-#define KM_2 TD_1_F1
-#define KM_3 TD_1_F1
-#define KM_4 TD_1_F1
-#define KM_5 TD_1_F1
-#define KM_6 TD_1_F1
-#define KM_7 TD_1_F1
-#define KM_8 TD_1_F1
-#define KM_9 TD_1_F1
-#define KM_0 TD_1_F1
-#define KM_MIN TD_1_F1
-#define KM_EQL TD_1_F1
+#define KM_1 TD(TD_1_F1)
+#define KM_2 TD(TD_2_F2)
+#define KM_3 TD(TD_3_F3)
+#define KM_4 TD(TD_4_F4)
+#define KM_5 TD(TD_5_F5)
+#define KM_6 TD(TD_6_F6)
+#define KM_7 TD(TD_7_F7)
+#define KM_8 TD(TD_8_F8)
+#define KM_9 TD(TD_9_F9)
+#define KM_10 TD(TD_0_F10)
+#define KM_11 TD(TD_MIN_F11)
+#define KM_12 TD(TD_EQL_F12)
+
 
 #else
 
+#define KM_1 KC_1
+#define KM_2 KC_2
+#define KM_3 KC_3
+#define KM_4 KC_4
+#define KM_5 KC_5
+#define KM_6 KC_6
+#define KM_7 KC_7
+#define KM_8 KC_8
+#define KM_9 KC_9
+#define KM_10 KC_0
+#define KM_11 KC_MINS
+#define KM_12 KC_EQL
+
 #endif // TAP_DANCE_ENABLE
-
-
-enum layers{
-    MAC_BASE,
-    WIN_BASE,
-    _FN1,
-    _FN2,
-    _FN3
-};
 
 #define KC_TASK LGUI(KC_TAB)
 #define KC_FLXP LGUI(KC_E)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAC_BASE] = LAYOUT_ansi_67(
-        KC_ESC,  KC_1,     KC_2,     KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,          KC_MUTE,
+        KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
         KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
         KC_CAPS, KC_A,     KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,           KC_Z,     KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            KC_RSFT, KC_UP,
         KC_LCTL, KC_LOPT,  KC_LCMD,                             KC_SPC,                             KC_RCMD,  MO(_FN1), MO(_FN3), KC_LEFT, KC_DOWN, KC_RGHT),
 
     [WIN_BASE] = LAYOUT_ansi_67(
-        KC_ESC,  KC_1,     KC_2,     KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,          KC_MUTE,
+        KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
         KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
         KC_CAPS, KC_A,     KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,           KC_Z,     KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            KC_RSFT, KC_UP,
@@ -124,6 +139,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [WIN_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
     [_FN1]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
     [_FN2]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
-    [_FN3]   = { ENCODER_CCW_CW(_______, _______)}
+    [_FN3]   = { ENCODER_CCW_CW(RGB_HUD, RGB_HUI)}
 };
 #endif // ENCODER_MAP_ENABLE
