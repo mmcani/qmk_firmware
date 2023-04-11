@@ -35,40 +35,32 @@ enum my_keycodes {
 };
 
 
-bool process_rgb_matrix_keys(uint16_t keycode, const keyrecord_t *record) {
-    bool rgb_processed = true;
-    if (record->event.pressed) {
-        switch (keycode) {
-            case RM_TOGG:
-                    rgb_matrix_toggle(); break;
-            case RM_MOD:
-                    rgb_matrix_step(); break;
-            case RM_HUI:
-                    rgb_matrix_increase_hue(); break;
-            case RM_HUD:
-                    rgb_matrix_decrease_hue(); break;
-            case RM_SAI:
-                    rgb_matrix_increase_sat(); break;
-            case RM_SAD:
-                    rgb_matrix_decrease_sat(); break;
-            case RM_VAI:
-                    rgb_matrix_increase_val(); break;
-            case RM_VAD:
-                    rgb_matrix_decrease_val(); break;
-            default:
-                    rgb_processed = false;
-        }
-    } else {
-        if (keycode >= SIZE_RM_KEYS) {
-            rgb_processed = false;
-        }
+typedef void ( * const void_fnc_ptr )(void);
+static const void_fnc_ptr key_to_funcs[] PROGMEM = {  // mapping of functions to keys
+    &rgb_matrix_toggle,
+    &rgb_matrix_step,
+    &rgb_matrix_increase_hue,
+    &rgb_matrix_decrease_hue,
+    &rgb_matrix_increase_sat,
+    &rgb_matrix_decrease_sat,
+    &rgb_matrix_increase_val,
+    &rgb_matrix_decrease_val,
+};
+
+bool handle_rgb_matrix_keys(uint16_t keycode, const keyrecord_t *record) {
+    if (keycode >= SIZE_RM_KEYS) {
+        return false;
     }
-    return rgb_processed;
+
+    if (record->event.pressed) {
+        key_to_funcs[keycode]();
+    }
+    return true;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (process_rgb_matrix_keys(keycode, record)) {
-        return false;
+    if (handle_rgb_matrix_keys(keycode, record)) {
+        return false;  // stop further processing
     }
     return true;
 }
