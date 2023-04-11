@@ -6,17 +6,16 @@
 #undef LOCKING_SUPPORT_ENABLE
 #undef LOCKING_RESYNC_ENABLE
 
-// disable rgb back leds on the back (case doesn't show them)
-#undef RGBLIGHT_EFFECT_BREATHING
-#undef RGBLIGHT_EFFECT_RAINBOW_MOOD
-#undef RGBLIGHT_EFFECT_RAINBOW_SWIRL
-#undef RGBLIGHT_EFFECT_SNAKE
-#undef RGBLIGHT_EFFECT_KNIGHT
-#undef RGBLIGHT_EFFECT_CHRISTMAS
-#undef RGBLIGHT_EFFECT_STATIC_GRADIENT
-#undef RGBLIGHT_EFFECT_RGB_TEST
-#undef RGBLIGHT_EFFECT_ALTERNATING
-#undef RGBLIGHT_EFFECT_TWINKLE
+// udef stuff we don't use, and limit sizes and stuff
+#define DYNAMIC_KEYMAP_LAYER_COUNT 3
 
-#define NO_MUSIC_MODE
-#define LAYER_STATE_8BIT
+// special features
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+#define CAPS_WORD_IDLE_TIMEOUT 1000
+
+// debounce settings
+#define DEBOUNCE 4
+
+// tap dance settings
+#define TAPPING_TERM 100
+#define TAPPING_TERM_PER_KEY
