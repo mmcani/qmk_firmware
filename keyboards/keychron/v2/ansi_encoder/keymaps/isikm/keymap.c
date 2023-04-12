@@ -96,6 +96,49 @@ tap_dance_action_t tap_dance_actions[] = {
 #define KC_TASK LGUI(KC_TAB)
 #define KC_FLXP LGUI(KC_E)
 
+#define FN1_LAYER_COLOR RGB_ORANGE
+#define FN2_LAYER_COLOR RGB_PURPLE
+
+
+void rgb_matrix_set_color_by_keycode(uint8_t led_min, uint8_t led_max, uint8_t layer, uint8_t red, uint8_t green, uint8_t blue) {
+    if (get_highest_layer(layer_state) > 0) {
+        for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+            for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+                uint8_t index = g_led_config.matrix_co[row][col];
+                if (index >= led_min && index < led_max && index != NO_LED
+                    && keymap_key_to_keycode(layer, (keypos_t){col,row}) > KC_TRNS) {
+                    rgb_matrix_set_color(index, red, green, blue);
+                }
+            }
+        }
+    }
+}
+
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t current_layer = get_highest_layer(layer_state);
+    switch (current_layer) {
+        case _FN2:
+            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, FN1_LAYER_COLOR);
+            break;
+        case _FN3:
+            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, FN2_LAYER_COLOR);
+            break;
+        case MAC_BASE:
+        case WIN_BASE:
+        default:
+            rgb_matrix_set_color_all(RGB_OFF);
+            break;
+    }
+
+    if (host_keyboard_led_state().caps_lock) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 255, 0, 0);
+    } else {
+        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 0, 0, 0);
+    }
+    return false;
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAC_BASE] = LAYOUT_ansi_67(
         KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
