@@ -13,21 +13,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include QMK_KEYBOARD_H
+// #include "os_detection.h"
 
-#include "os_detection.h"
 
-// clang-format off
 
-enum layers{
-    MAC_BASE,
-    WIN_BASE,
-    _FN1,
-    _FN2,
-    _FN3
-};
-
+/*===============================TAP DANCE SETTINGS===============================*/
 #if defined(TAP_DANCE_ENABLE)// Tap Dance declarations
 enum {
     TD_1_F1,
@@ -75,7 +66,6 @@ tap_dance_action_t tap_dance_actions[] = {
 #define KM_11 TD(TD_MIN_F11)
 #define KM_12 TD(TD_EQL_F12)
 
-
 #else
 
 #define KM_1 KC_1
@@ -90,85 +80,43 @@ tap_dance_action_t tap_dance_actions[] = {
 #define KM_10 KC_0
 #define KM_11 KC_MINS
 #define KM_12 KC_EQL
-
 #endif // TAP_DANCE_ENABLE
+/*===============================TAP DANCE SETTINGS===============================*/
+
+
+
+/*====================================KEY MAPS====================================*/
+enum layers{
+    GAME_BASE = 0,
+    WIN_BASE,
+    FN1,
+    FN2,
+};
 
 #define KC_TASK LGUI(KC_TAB)
-#define KC_FLXP LGUI(KC_E)
-
-#define FN1_LAYER_COLOR RGB_ORANGE
-#define FN2_LAYER_COLOR RGB_PURPLE
-
-
-void rgb_matrix_set_color_by_keycode(uint8_t led_min, uint8_t led_max, uint8_t layer, uint8_t red, uint8_t green, uint8_t blue) {
-    if (get_highest_layer(layer_state) > 0) {
-        for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
-            for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
-                uint8_t index = g_led_config.matrix_co[row][col];
-                if (index >= led_min && index < led_max && index != NO_LED
-                    && keymap_key_to_keycode(layer, (keypos_t){col,row}) > KC_TRNS) {
-                    rgb_matrix_set_color(index, red, green, blue);
-                }
-            }
-        }
-    }
-}
-
-
-bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    uint8_t current_layer = get_highest_layer(layer_state);
-    switch (current_layer) {
-        case _FN2:
-            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, FN1_LAYER_COLOR);
-            break;
-        case _FN3:
-            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, FN2_LAYER_COLOR);
-            break;
-        case MAC_BASE:
-        case WIN_BASE:
-        default:
-            rgb_matrix_set_color_all(RGB_OFF);
-            break;
-    }
-
-    if (host_keyboard_led_state().caps_lock) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 255, 0, 0);
-    } else {
-        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 0, 0, 0);
-    }
-    return false;
-}
-
+#define KC_FLXP  LGUI(KC_E)
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [MAC_BASE] = LAYOUT_ansi_67(
+    [GAME_BASE] = LAYOUT_ansi_67(
         KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
         KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
         KC_CAPS, KC_A,     KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,           KC_Z,     KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            KC_RSFT, KC_UP,
-        KC_LCTL, KC_LOPT,  KC_LCMD,                             KC_SPC,                             KC_RCMD,  MO(_FN1), MO(_FN3), KC_LEFT, KC_DOWN, KC_RGHT),
-
+        KC_LCTL, KC_LWIN,  KC_LALT,                             KC_SPC,                             KC_RALT,  MO(FN2), MO(FN1), KC_LEFT, KC_DOWN, KC_RGHT),
     [WIN_BASE] = LAYOUT_ansi_67(
         KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
         KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
         KC_CAPS, KC_A,     KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,           KC_Z,     KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            KC_RSFT, KC_UP,
-        KC_LCTL, KC_LWIN,  KC_LALT,                             KC_SPC,                             KC_RALT,  MO(_FN2), MO(_FN3), KC_LEFT, KC_DOWN, KC_RGHT),
+        KC_LCTL, KC_LWIN,  KC_LALT,                             KC_SPC,                             KC_RALT,  MO(FN2), MO(FN1), KC_LEFT, KC_DOWN, KC_RGHT),
 
-    [_FN1] = LAYOUT_ansi_67(
-        KC_GRV,  KC_BRID,  KC_BRIU,  KC_NO,   KC_NO,   RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,          _______,
-        RGB_TOG, RGB_MOD,  RGB_VAI,  RGB_HUI, RGB_SAI, RGB_SPI, _______, _______, _______, _______, _______,  _______,  _______,  _______,          _______,
-        _______, RGB_RMOD, RGB_VAD,  RGB_HUD, RGB_SAD, RGB_SPD, _______, _______, _______, _______, _______,  _______,            _______,          _______,
-        _______,           _______,  _______, _______, _______, _______, NK_TOGG, _______, _______, _______,  _______,            _______, _______,
-        _______, _______,  _______,                             _______,                            _______,  _______,  _______,  _______, _______, _______),
-
-    [_FN2] = LAYOUT_ansi_67(
+    [FN1] = LAYOUT_ansi_67(
         KC_GRV,  KC_BRID,  KC_BRIU,  KC_TASK, KC_FLXP, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,          _______,
         RGB_TOG, RGB_MOD,  RGB_VAI,  RGB_HUI, RGB_SAI, RGB_SPI, _______, _______, _______, _______, _______,  _______,  _______,  _______,          _______,
         _______, RGB_RMOD, RGB_VAD,  RGB_HUD, RGB_SAD, RGB_SPD, _______, _______, _______, _______, _______,  _______,            _______,          _______,
         _______,           _______,  _______, _______, _______, _______, NK_TOGG, _______, _______, _______,  _______,            _______, _______,
         _______, _______,  _______,                             _______,                            _______,  _______,  _______,  _______, _______, _______),
 
-    [_FN3] = LAYOUT_ansi_67(
+    [FN2] = LAYOUT_ansi_67(
         KC_TILD, KC_F1,    KC_F2,    KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,   KC_F12,   _______,          _______,
         RGB_TOG, RGB_MOD,  RGB_VAI,  RGB_HUI, RGB_SAI, RGB_SPI, _______, _______, _______, _______, _______,  _______,  _______,  _______,          _______,
         _______, RGB_RMOD, RGB_VAD,  RGB_HUD, RGB_SAD, RGB_SPD, _______, _______, _______, _______, _______,  _______,            _______,          _______,
@@ -178,10 +126,50 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
-    [MAC_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
+    [GAME_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
     [WIN_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
-    [_FN1]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
-    [_FN2]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
-    [_FN3]   = { ENCODER_CCW_CW(RGB_HUD, RGB_HUI)}
+    [FN1]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
+    [FN2]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
 };
 #endif // ENCODER_MAP_ENABLE
+/*====================================KEY MAPS====================================*/
+
+
+
+/*====================================RGB MODS====================================*/
+#define FN1_LAYER_COLOR RGB_ORANGE
+#define FN2_LAYER_COLOR RGB_SPRINGGREEN
+
+// helper function that sets no trans keys of the layer to the provided color
+void rgb_matrix_set_color_by_keycode(uint8_t led_min, uint8_t led_max, uint8_t layer, uint8_t red, uint8_t green, uint8_t blue) {
+    for (uint8_t key_row = 0; key_row < MATRIX_ROWS; ++key_row) {
+        for (uint8_t key_col = 0; key_col < MATRIX_COLS; ++key_col) {
+            const keypos_t key_position = {key_col, key_row};
+            if (keymap_key_to_keycode(layer, key_position) > KC_TRNS) {
+                const uint8_t led_index = g_led_config.matrix_co[key_row][key_col];
+                RGB_MATRIX_INDICATOR_SET_COLOR(led_index, red, green, blue);
+            }
+        }
+    }
+}
+
+// rgb override, adjust colors based on color, fall back to default flags afterward
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t current_layer = get_highest_layer(layer_state|default_layer_state);
+    switch (current_layer) {
+        case FN1:
+            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, FN1_LAYER_COLOR);
+            break;
+        case FN2:
+            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, FN2_LAYER_COLOR);
+            break;
+        case WIN_BASE:
+        default:
+            if (!rgb_matrix_get_flags()) {  // if no led layers are set, set it to black, else the last led layers  setting will take over
+                rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, RGB_OFF);
+            }
+            break;
+    }
+    return true;  // api is designed so if return is true it will do further led layers on top of this
+}
+/*====================================RGB MODS====================================*/
