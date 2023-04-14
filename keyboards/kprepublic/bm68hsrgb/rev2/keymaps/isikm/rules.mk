@@ -1,9 +1,9 @@
 # special features
 CAPS_WORD_ENABLE = yes
 DEBOUNCE_TYPE = sym_eager_pk
-# UNICODE_ENABLE = yes
 DYNAMIC_MACRO_ENABLE = yes
 VIA_ENABLE = yes
+SPACE_CADET_ENABLE = yes
 
 # saving space
 LTO_ENABLE = yes

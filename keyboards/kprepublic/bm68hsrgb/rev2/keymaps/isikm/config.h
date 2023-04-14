@@ -14,11 +14,9 @@
 #define CAPS_WORD_IDLE_TIMEOUT 1000
 
 // debounce settings
-#define DEBOUNCE 4
+#define DEBOUNCE 3
 
 // tap dance settings
+#define TAPPING_TOGGLE 2
 #define TAPPING_TERM 100
 #define TAPPING_TERM_PER_KEY
-
-// tap triggers
-#define TAPPING_TOGGLE 2
