@@ -1,0 +1,12 @@
+VIA_ENABLE = yes
+
+CAPS_WORD_ENABLE = yes
+DEBOUNCE_TYPE = sym_eager_pk
+OS_DETECTION_ENABLE = yes
+TAP_DANCE_ENABLE = no
+UNICODE_ENABLE = no
+SPACE_CADET_ENABLE = yes
+GRAVE_ESC_ENABLE = yes
+
+# size stuff
+LTO_ENABLE = yes
