@@ -45,7 +45,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,            _______,
      _______,  _______,  _______,  _______,  _______,  KC_TERM,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  WN_LOCK,  _______,  _______,            _______,            _______,
-     _______,  _______,  _______,  _______,  KC_CALC,  _______,  BAT_LVL,  NK_TOGG,  KC_MYCM,  _______,  _______,                      _______,  _______,  _______,
+     _______,  _______,  _______,  KC_CALC,  _______,  BAT_LVL,  NK_TOGG,  KC_MYCM,  _______,  _______,  _______,                      _______,  _______,  _______,
      _______,  _______,  _______,                                _______,                                _______,  K_FUNC,   KC_NO,    _______,  _______,  _______),
 
 [EXTRA] = LAYOUT_ansi_68(
@@ -90,7 +90,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         case GAME_BASE:
         default:
             if (!rgb_matrix_get_flags()) {  // if no led layers are set, set it to black, else the last led layers setting will take over
-                rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, RGB_OFF);
+                rgb_matrix_set_color_by_keycode(false, led_min, led_max, current_layer, RGB_OFF);
             }
             break;
     }
