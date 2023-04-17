@@ -17,6 +17,42 @@
 // #include "os_detection.h"
 
 
+/*====================================LAYER MACROS====================================*/
+enum unicode_names {
+    turkish_s,
+    turkish_s_upper,
+
+    turkish_c,
+    turkish_c_upper,
+
+    turkish_i,
+    turkish_i_upper,
+
+    turkish_g,
+    turkish_g_upper,
+
+    turkish_o,
+    turkish_o_upper,
+
+    turkish_u,
+    turkish_u_upper,
+};
+
+const uint32_t unicode_map[] PROGMEM = {
+    [turkish_s]  = 0x015F,          // ş
+    [turkish_s_upper] = 0x015E,     // Ş
+    [turkish_c]  = 0x00E7,          // ç
+    [turkish_c_upper] = 0x00C7,     // Ç
+    [turkish_i] = 0x0131,           // ı
+    [turkish_i_upper] = 0x0130,     // İ
+    [turkish_g] = 0x011F,           // ğ
+    [turkish_g_upper] = 0x011E,     // Ğ
+    [turkish_o] = 0x00F6,           // ö
+    [turkish_o_upper] = 0x00D6,     // Ö
+    [turkish_u] = 0x00FC,           // ü
+    [turkish_u_upper] = 0x00DC,     // Ü
+};
+
 
 /*===============================TAP DANCE SETTINGS===============================*/
 #if defined(TAP_DANCE_ENABLE)// Tap Dance declarations
@@ -100,6 +136,13 @@ enum layers{
 #define K_MEDIA TT(RGB_MEDIA)
 #define K_FUNC TT(FUNCTIONS)
 
+#define K_Tur_S XP(turkish_s, turkish_s_upper)
+#define K_Tur_C XP(turkish_c, turkish_c_upper)
+#define K_Tur_I XP(turkish_i, turkish_i_upper)
+#define K_Tur_G XP(turkish_g, turkish_g_upper)
+#define K_Tur_O XP(turkish_o, turkish_o_upper)
+#define K_Tur_U XP(turkish_u, turkish_u_upper)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [GAME_BASE] = LAYOUT_ansi_67(
         KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
@@ -123,9 +166,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FUNCTIONS] = LAYOUT_ansi_67(
         KC_TILD, KC_F1,    KC_F2,    KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,   KC_F12,   _______,          C(KC_0),
-        _______, _______,  _______,  _______, _______, KC_TERM, _______, _______, _______, _______, _______,  _______,  _______,  _______,          KC_PAGE_UP,
-        _______, _______,  _______,  _______, _______, _______, _______, _______, _______, WN_LOCK, _______,  _______,            _______,          KC_PAGE_DOWN,
-        _______,           _______,  _______, KC_CALC, _______, _______, _______, KC_MYCM, _______, _______,  _______,            _______, KC_HOME,
+        _______, _______,  _______,  _______, _______, KC_TERM, _______, K_Tur_U, K_Tur_I, K_Tur_O, _______,  _______,  _______,  _______,          KC_PAGE_UP,
+        _______, _______,  K_Tur_S,  _______, _______, K_Tur_G, _______, _______, _______, _______, _______,  _______,            _______,          KC_PAGE_DOWN,
+        _______,           _______,  _______, K_Tur_C, _______, _______, _______, KC_MYCM, _______, _______,  _______,            _______, KC_HOME,
         _______, _______,  _______,                             _______,                            _______,  K_FUNC,   KC_NO,    _______, KC_END,  _______)
 };
 
