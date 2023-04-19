@@ -17,7 +17,7 @@
 // #include "os_detection.h"
 
 
-/*====================================LAYER MACROS====================================*/
+/*====================================UNICODE====================================*/
 enum unicode_names {
     turkish_s,
     turkish_s_upper,
@@ -53,10 +53,56 @@ const uint32_t unicode_map[] PROGMEM = {
     [turkish_u_upper] = 0x00DC,     // Ü
 };
 
+#define K_Tur_S XP(turkish_s, turkish_s_upper)
+#define K_Tur_C XP(turkish_c, turkish_c_upper)
+#define K_Tur_I XP(turkish_i, turkish_i_upper)
+#define K_Tur_G XP(turkish_g, turkish_g_upper)
+#define K_Tur_O XP(turkish_o, turkish_o_upper)
+#define K_Tur_U XP(turkish_u, turkish_u_upper)
+/*====================================UNICODE====================================*/
+
+
 
 /*===============================TAP DANCE SETTINGS===============================*/
 #if defined(TAP_DANCE_ENABLE)// Tap Dance declarations
+
+typedef struct {
+    uint16_t tap;
+    uint16_t hold;
+    uint16_t held;
+} tap_dance_tap_hold_t;
+
+void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
+    tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
+    if (state->pressed) {
+        if (state->count == 1
+            #ifndef PERMISSIVE_HOLD
+            && !state->interrupted
+            #endif
+        ) {
+            register_code16(tap_hold->hold);
+            tap_hold->held = tap_hold->hold;
+        } else {
+            register_code16(tap_hold->tap);
+            tap_hold->held = tap_hold->tap;
+        }
+    }
+}
+
+void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
+    tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
+    if (tap_hold->held) {
+        unregister_code16(tap_hold->held);
+        tap_hold->held = 0;
+    }
+}
+
+#define ACTION_TAP_DANCE_TAP_HOLD(tap, hold) \
+    { .fn = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}), }
+
+
 enum {
+    // numbers function keys
     TD_1_F1,
     TD_2_F2,
     TD_3_F3,
@@ -69,7 +115,16 @@ enum {
     TD_0_F10,
     TD_MIN_F11,
     TD_EQL_F12,
+
+    // latin to turkish letters
+    TH_S,
+    TH_C,
+    TH_I,
+    TH_G,
+    TH_O,
+    TH_U,
 };
+
 
 // Tap Dance definitions
 tap_dance_action_t tap_dance_actions[] = {
@@ -87,6 +142,13 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_MIN_F11] = ACTION_TAP_DANCE_DOUBLE(KC_MINS, KC_F11),
     [TD_EQL_F12] = ACTION_TAP_DANCE_DOUBLE(KC_EQL, KC_F12),
 
+    [TH_S] = ACTION_TAP_DANCE_TAP_HOLD(KC_S, K_Tur_S),
+    [TH_C] = ACTION_TAP_DANCE_TAP_HOLD(KC_C, K_Tur_C),
+    [TH_I] = ACTION_TAP_DANCE_TAP_HOLD(KC_I, K_Tur_I),
+    [TH_G] = ACTION_TAP_DANCE_TAP_HOLD(KC_G, K_Tur_G),
+    [TH_O] = ACTION_TAP_DANCE_TAP_HOLD(KC_O, K_Tur_O),
+    [TH_U] = ACTION_TAP_DANCE_TAP_HOLD(KC_U, K_Tur_U),
+
 };
 
 #define KM_1 TD(TD_1_F1)
@@ -102,20 +164,37 @@ tap_dance_action_t tap_dance_actions[] = {
 #define KM_11 TD(TD_MIN_F11)
 #define KM_12 TD(TD_EQL_F12)
 
-#else
+#define KM_S TD(TH_S)
+#define KM_C TD(TH_C)
+#define KM_I TD(TH_I)
+#define KM_G TD(TH_G)
+#define KM_O TD(TH_O)
+#define KM_U TD(TH_U)
 
-#define KM_1 KC_1
-#define KM_2 KC_2
-#define KM_3 KC_3
-#define KM_4 KC_4
-#define KM_5 KC_5
-#define KM_6 KC_6
-#define KM_7 KC_7
-#define KM_8 KC_8
-#define KM_9 KC_9
-#define KM_10 KC_0
-#define KM_11 KC_MINS
-#define KM_12 KC_EQL
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    tap_dance_action_t *action;
+    switch (keycode) {
+        case TD(TH_S):  // list all tap dance keycodes with tap-hold configurations
+        case TD(TH_C):
+        case TD(TH_I):
+        case TD(TH_G):
+        case TD(TH_O):
+        case TD(TH_U):
+            action = &tap_dance_actions[TD_INDEX(keycode)];
+            if (!record->event.pressed && action->state.count && !action->state.finished) {
+                tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
+                tap_code16(tap_hold->tap);
+            }
+            break;
+        default:
+            break;
+
+    }
+    return true;
+}
+
+
 #endif // TAP_DANCE_ENABLE
 /*===============================TAP DANCE SETTINGS===============================*/
 
@@ -136,25 +215,19 @@ enum layers{
 #define K_MEDIA TT(RGB_MEDIA)
 #define K_FUNC TT(FUNCTIONS)
 
-#define K_Tur_S XP(turkish_s, turkish_s_upper)
-#define K_Tur_C XP(turkish_c, turkish_c_upper)
-#define K_Tur_I XP(turkish_i, turkish_i_upper)
-#define K_Tur_G XP(turkish_g, turkish_g_upper)
-#define K_Tur_O XP(turkish_o, turkish_o_upper)
-#define K_Tur_U XP(turkish_u, turkish_u_upper)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [GAME_BASE] = LAYOUT_ansi_67(
         KC_ESC,  KM_1,     KM_2,     KM_3,    KM_4,    KM_5,    KM_6,    KM_7,    KM_8,    KM_9,    KM_10,    KM_11,    KM_12,    KC_BSPC,          KC_MUTE,
-        KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
-        KC_CAPS, KC_A,     KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
-        SC_LSPO,           KC_Z,     KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            SC_RSPC, KC_UP,
+        KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KM_U,    KM_I,    KM_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
+        KC_CAPS, KC_A,     KM_S,     KC_D,    KC_F,    KM_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
+        SC_LSPO,           KC_Z,     KC_X,    KM_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            SC_RSPC, KC_UP,
         KC_LCTL, KC_LWIN,  LALT_LB,                             KC_SPC,                             RALT_RB,  K_FUNC,   K_MEDIA,  KC_LEFT, KC_DOWN, KC_RGHT),
     [WIN_BASE] = LAYOUT_ansi_67(
         KC_ESC,  KC_1,     KC_2,     KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,          KC_MUTE,
-        KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
-        KC_CAPS, KC_A,     KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
-        SC_LSPO,           KC_Z,     KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            SC_RSPC, KC_UP,
+        KC_TAB,  KC_Q,     KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KM_U,    KM_I,    KM_O,    KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
+        KC_CAPS, KC_A,     KM_S,     KC_D,    KC_F,    KM_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,            KC_ENT,           KC_HOME,
+        SC_LSPO,           KC_Z,     KC_X,    KM_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,   KC_SLSH,            SC_RSPC, KC_UP,
         KC_LCTL, KC_LWIN,  LALT_LB,                             KC_SPC,                             RALT_RB,  K_FUNC,   K_MEDIA,  KC_LEFT, KC_DOWN, KC_RGHT),
 
     [RGB_MEDIA] = LAYOUT_ansi_67(
@@ -222,3 +295,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     return true;  // api is designed so if return is true it will do further led layers on top of this, that way handling of caps lock etc.. takes priority
 }
 /*====================================RGB MODS====================================*/
+
+
+
+/*====================================TAP DANCE====================================*/
