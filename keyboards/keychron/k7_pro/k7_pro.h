@@ -29,7 +29,6 @@
 #    define USER_START SAFE_RANGE
 #endif
 
-#define CAPS_LOCK_LED_INDEX 30
 
 // clang-format off
 enum {
