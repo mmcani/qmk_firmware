@@ -47,7 +47,7 @@ endif
 QMK_BIN := qmk
 
 # avoid 'Entering|Leaving directory' messages
-MAKEFLAGS += --no-print-directory
+# MAKEFLAGS += --no-print-directory
 
 ON_ERROR := error_occurred=1
 
