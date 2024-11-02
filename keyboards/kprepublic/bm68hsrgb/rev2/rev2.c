@@ -112,13 +112,36 @@ led_config_t g_led_config = { {
     1, 1, 1, 4, 1, 1, 1, 1, 1, 1
 } };
 
-
-bool rgb_matrix_indicators_kb(void) {
-    if (!rgb_matrix_indicators_user()) {
-        return false;
+bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
+    if (!process_record_user(keycode, record)) { return false; }
+    switch (keycode) {
+        case RGB_TOG:
+            if (record->event.pressed) {
+                switch (rgb_matrix_get_flags()) {
+                    case LED_FLAG_ALL: {
+                        rgb_matrix_set_flags(LED_FLAG_NONE);
+                        rgb_matrix_set_color_all(0, 0, 0);
+                    } break;
+                    default: {
+                        rgb_matrix_set_flags(LED_FLAG_ALL);
+                    } break;
+                }
+            }
+            return false;
     }
+    return true;
+}
+
+
+bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
+    if (!rgb_matrix_indicators_advanced_user(led_min, led_max)) { return false; }
+    // RGB_MATRIX_INDICATOR_SET_COLOR(index, red, green, blue);
     if (host_keyboard_led_state().caps_lock) {
-        rgb_matrix_set_color(30, 0xFF, 0xFF, 0xFF);
+        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 255, 255, 255);
+    } else {
+        if (!rgb_matrix_get_flags()) {
+            RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 0, 0, 0);
+        }
     }
     return true;
 }
